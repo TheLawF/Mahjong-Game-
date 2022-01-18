@@ -61,20 +61,23 @@ all_groups += triplets + flush + pengs + gangs + doublets
 十三幺 字一色 大四喜 大三元 小四喜 小三元 四暗刻 四杠子 九莲宝灯
 """
 ''' 以下为顺子类和牌型：
-一般高 老少副 平和 喜相逢 四归一 连六 三色三同顺 一色三节高 一色三步高 
-一色四步高 一色四节高 '''
+一般高 老少副 平和 喜相逢 四归一 连六 三色三同顺 一色三同顺 一色三节高 一色三步高 
+一色四步高 一色四节高 一色四同顺'''
 doubles = []
 normal_height = False
 flush_1_9 = False
 ordinary = False
 reunion = False
 quadrilet = False
-hexa_flush = False
-flush_of_three = False
-flush_of_one = False
-three_steps_of_one = False
-four_steps_of_one = False
-four_triplets_of_one = False
+hexa_flush = False                # 连六
+flush_of_three = False            # 三色三同顺 8
+higher_flush_of_Three = False     # 三色三节高 8
+same_flushes_of_one = False       # 一色三同顺 24
+three_steps_of_one = False        # 一色三步高 16
+higher_flush_of_one = False       # 一色三节高 24
+four_steps_of_one = False         # 一色四步高 32
+four_triplets_of_one = False      # 一色四节高 48
+four_flushes_of_one = False       # 一色四同顺 48
 
 '''以下为刻子类和牌型：
 碰碰和 全双刻 幺九刻 双暗刻 三暗刻 双同刻 三同刻 
@@ -399,8 +402,8 @@ def normal(owned, gang, peng):
         for a in all_WINDs:
             if len(all_WINDs) % 3 == 0:
                 if all_WINDs.count(a) == 3:
-                    local_winds.append(a * 3)
                     chars.append(a * 3)
+                    all_WINDs.remove(a)
                     all_WINDs.remove(a)
                     all_WINDs.remove(a)
 
@@ -425,8 +428,8 @@ def normal(owned, gang, peng):
         for a in all_ARROWs:
             if len(all_ARROWs) % 3 == 0:
                 if all_ARROWs.count(a) == 3:
-                    local_arrows.append(a * 3)
                     chars.append(a * 3)
+                    all_ARROWs.remove(a)
                     all_ARROWs.remove(a)
                     all_ARROWs.remove(a)
 
@@ -516,8 +519,23 @@ class SingleColor:
             self.win = True
 
 
+class CharLess:
+    win = False
+    num = 0
+    score = 1
+
+    def char_less(self, owned):
+        """无字和牌判定，遍历手牌列表，如果元素不属于字牌则数量加一，如果数量等于手牌长度则判定通过。"""
+        for each in owned:
+            if each not in characters:
+                self.num += 1
+
+        if self.num == 14:
+            self.win = True
+
 class FieldWind:
     win = False
+    score = 1
 
     def field_Wind(self, field):
         """圈风刻和牌判定，如果面子列表中存在着一个长度为 3 的字符串，如果每个
@@ -527,9 +545,7 @@ class FieldWind:
                 self.win = True
 
 
-class SideWind:
-    win = False
-    score = 1
+class SideWind(FieldWind):
 
     def side_Wind(self, side_e, side_s, side_w, side_n):
         """门风刻和牌判定，如果面子列表中存在着一个长度为 3 的字符串，如果每个
@@ -540,9 +556,7 @@ class SideWind:
                     return side_e
 
 
-class ArrowTriplets:
-    win = False
-    score = 1
+class ArrowTriplets(SideWind):
 
     def arrow_Triplets(self):
         for each in triplets:
@@ -555,6 +569,24 @@ class ArrowTriplets:
                     double_arrows = True
                     return double_arrows
             # print(arrow_triplets)
+
+
+class NumberTriplets:
+    def __init__(self):
+        self.win = False
+
+    three = False
+    score2 = 4
+    score3 = 16
+
+    def double_triplets(self):
+        """双暗刻，检测 triplets列表的长度。"""
+        if len(triplets) == 2:
+            self.win = True
+
+    def triple_triplets(self):
+        if len(triplets) == 2:
+            self.three = False
 
 
 class PengPeng():
@@ -595,6 +627,30 @@ class Missing_Alones():
             self.win = True
 
 
+class NormalHeight(NumberTriplets):
+    four = False
+    score = 1
+    score3 = 24
+    score4 = 48
+
+    def normal_height(self):
+        """一般高的和牌判定函数，直接在normal()函数调用后检测顺子中相同元素的个数。"""
+        for each in flush:
+            if flush.count(each) == 2:
+                self.win = True
+
+    def same_Flushes_of_One(self):
+        """一色三同顺的判定，需要三幅（花色和序数）完全相同的顺子。"""
+        for each in flush:
+            if flush.count(each) == 3:
+                self.three = True
+
+    def four_Flushes_of_One(self):
+        """一色四同顺需要四副完全相同的顺子。"""
+        for each in flush:
+            if flush.count(each) == 4:
+                self.four = True
+
 def get_gang():
     if len(gangs):
         _gang = True
@@ -628,7 +684,7 @@ def mixing_Color(owned):
 
 
 class Clearing():
-    "门前清的判断代码，检测碰牌列表和杠牌列表内的元素个数。"
+    """门前清的判断代码，检测碰牌列表和杠牌列表内的元素个数。"""
     win = False
     score = 2
 
@@ -638,12 +694,12 @@ class Clearing():
 
 
 class Ordinary():
-    "平和的判定类以及判定函数，检测flush内元素的个数。"
+    """平和的判定类以及判定函数，检测flush内元素的个数，同时将牌对子不能是字牌。"""
     win = False
     score = 2
 
     def get_ordinary(self):
-        if len(flush) == 4:
+        if len(flush) == 4 and doublets[0] not in characters:
             self.win = True
 
 

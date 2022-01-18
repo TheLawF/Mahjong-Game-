@@ -73,6 +73,7 @@ class Banker:
         self.unicode = 126976
         self.an__Gang = 0
         self.victory = False
+        self.zimo = False
         
         self.isBanker = True
         self.isSouth = False
@@ -198,6 +199,7 @@ class Banker:
         # 0番鸡和采取的分数结算形式，算分方法为役种番数乘以得分倍数
         if winDoub == 0:
             self.score += 1 * self.double
+            self.zimo = True
             return True
 
     def cheat(self):
@@ -427,6 +429,8 @@ def main():
                 banker.gang_pai(walls)
                 if banker.gang_pai(walls):
                     print(banker.owned)
+                    print(banker.peng)
+                    print(banker.gang)
                     break
 
                 else:
@@ -669,6 +673,53 @@ def main():
             normal = rules.normal(banker.owned, banker.gang, banker.peng)
             rules.all_groups = rules.chars + rules.triplets + rules.flush + rules.doublets + rules.pengs + rules.gangs
 
+            # 一般高判定
+            nh = rules.NormalHeight()
+            nh.normal_height()
+            nh.four_Flushes_of_One()
+            nh.same_Flushes_of_One()
+            if nh.win is True:
+                banker.score += nh.score * banker.double
+                south.score -= nh.score * banker.double / 3
+                west.score -= nh.score * banker.double / 3
+                north.score -= nh.score * banker.double / 3
+            # 一色三同顺<有bug>
+            elif nh.three is True:
+                banker.score += nh.score3 * banker.double
+                south.score -= nh.score3 * banker.double / 3
+                west.score -= nh.score3 * banker.double / 3
+                north.score -= nh.score3 * banker.double / 3
+            # 一色四同顺<有bug>
+            elif nh.four is True:
+                banker.score += nh.score4 * banker.double
+                south.score -= nh.score4 * banker.double / 3
+                west.score -= nh.score4 * banker.double / 3
+                north.score -= nh.score4 * banker.double / 3
+
+            # 碰碰和判定
+            pp = rules.PengPeng()
+            pp.peng_Peng()
+            if pp.win is True:
+                banker.score += pp.score * banker.double
+                south.score -= pp.score * banker.double / 3
+                west.score -= pp.score * banker.double / 3
+                north.score -= pp.score * banker.double / 3
+
+            # 暗刻类判定
+            nt = rules.NumberTriplets()
+            nt.double_triplets()
+            nt.triple_triplets()
+            if nt.win is True:
+                banker.score += nt.score2 * banker.double
+                south.score -= nt.score2 * banker.double / 3
+                west.score -= nt.score2 * banker.double / 3
+                north.score -= nt.score2 * banker.double / 3
+            elif nt.three is True:
+                banker.score += nt.score3 * banker.double
+                south.score -= nt.score3 * banker.double / 3
+                west.score -= nt.score3 * banker.double / 3
+                north.score -= nt.score3 * banker.double / 3
+
 
             # 平和判定
             od = rules.Ordinary()
@@ -688,16 +739,26 @@ def main():
                 west.score -= clear.score * banker.double / 3
                 north.score -= clear.score * banker.double / 3
 
+            # 无字判定
+            cl = rules.CharLess()
+            cl.char_less(banker.owned)
+            if cl.win == True:
+                banker.score += cl.score * banker.double
+                south.score -= cl.score * banker.double / 3
+                west.score -= cl.score * banker.double / 3
+                north.score -= cl.score * banker.double / 3
+
             # 七对判定
             sd = rules.SevenDoublets()
             sd.seven_Doublets(banker.owned)
 
-            if len(rules.all_groups) >= 5:
+            if len(rules.all_groups) == 5:
                 banker.score_account()
+                banker.score += 1
                 print("屁胡，一番")
-                south.score -= banker.double / 3
-                west.score -= banker.double / 3
-                north.score -= banker.double / 3
+                south.score -= banker.double + 1 / 3
+                west.score -= banker.double + 1 / 3
+                north.score -= banker.double + 1 / 3
                 break
 
             elif len(rules.doublets) == 7:
