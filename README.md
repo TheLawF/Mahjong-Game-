@@ -4,7 +4,7 @@
 A simple mahjong game (but actually an algorythm to measure the socring of mahjong tiles.)   
 
 目前已经完成的番种：  
-1. 无字        1番   
+1. 无字&ensp;        1番   
 2. 连六        1番
 3. 喜相逢      1番
 4. 四归一      1番
