@@ -4,26 +4,26 @@
 A simple mahjong game (but actually an algorythm to measure the socring of mahjong tiles.)   
 
 目前已经完成的番种：  
-1. 无字&ensp;        1番   
-2. 连六        1番
-3. 喜相逢      1番
-4. 四归一      1番
-5. 老少副      1番
-6. 幺九刻      1番
-7. 断幺        2番
-8. 平和        2番
-9. 门前清      2番
-10. 一般高     2番
-11. 缺一门     2番
-12. 双暗刻     2番
-13. 双同刻     2番
-14. 全带幺     4番
-15. 五门齐     6番
-16. 碰碰和     6番
-17. 全带五     16番
-18. 三暗刻     16番
-19. 混幺九     32番
-20. 清幺九     64番
-21. 四暗刻     64番
+1. 无字&emsp;&emsp;1番   
+2. 连六&emsp;&emsp;1番
+3. 喜相逢&emsp;&emsp;1番
+4. 四归一&emsp;&emsp;1番
+5. 老少副&emsp;&emsp;1番
+6. 幺九刻&emsp;&emsp;1番
+7. 断幺&emsp;&emsp;2番
+8. 平和&emsp;&emsp;2番
+9. 门前清&emsp;&emsp;2番
+10. 一般高&emsp;&emsp;2番
+11. 缺一门&emsp;&emsp;2番
+12. 双暗刻&emsp;&emsp;2番
+13. 双同刻&emsp;&emsp;2番
+14. 全带幺&emsp;&emsp;4番
+15. 五门齐&emsp;&emsp;6番
+16. 碰碰和&emsp;&emsp;6番
+17. 全带五&emsp;&emsp;16番
+18. 三暗刻&emsp;&emsp;16番
+19. 混幺九&emsp;&emsp;32番
+20. 清幺九&emsp;&emsp;64番
+21. 四暗刻&emsp;&emsp;64番
 
 持续更新中……
